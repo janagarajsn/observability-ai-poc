@@ -1,0 +1,11 @@
+faker
+python-dotenv
+openai
+langchain
+langchain-openai
+langchain-core
+langchain-community
+langchain-qdrant
+qdrant-client
+tiktoken
+

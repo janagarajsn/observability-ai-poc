@@ -1,0 +1,6 @@
+.qodo/
+lenv/
+logs/
+input-logs/
+ingesttracker/
+.env
