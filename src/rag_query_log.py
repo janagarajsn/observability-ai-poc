@@ -1,11 +1,12 @@
 import os
 import logging
-from openai import OpenAI
 from dotenv import load_dotenv
 from qdrant_client import QdrantClient
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_qdrant import QdrantVectorStore
 from langchain.chains import RetrievalQA
+from langchain_core.prompts import ChatPromptTemplate
+from langchain.schema import AIMessage, HumanMessage
 
 # Load environment variables
 load_dotenv()
@@ -20,7 +21,8 @@ QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
 COLLECTION_NAME = os.getenv("COLLECTION_NAME", "aks_logs")
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
 RETRIEVAL_MODEL = os.getenv("RETRIEVAL_MODEL", "gpt-4.1-nano")
-DEFAULT_K = 5
+DEFAULT_K = int(os.getenv("DEFAULT_K", 5))
+CHAT_HISTORY_LIMIT = int(os.getenv("CHAT_HISTORY_LIMIT", 10))
 
 # Initialize Qdrant client
 qdrant_client = QdrantClient(url=QDRANT_URL)
@@ -45,8 +47,11 @@ else:
 vector_store = QdrantVectorStore(client=qdrant_client, collection_name=COLLECTION_NAME, embedding=embeddings)
 
 # Query logs with RAG
-def query_log(query_text, k):
+def query_log(query_text, k=DEFAULT_K, chat_history=None):
     logger.info(f"Querying logs with: {query_text}")
+
+    chat_history = chat_history or []
+
     retriever = vector_store.as_retriever(search_kwargs={"k": k})
 
     qa_chain = RetrievalQA.from_chain_type(
@@ -56,10 +61,13 @@ def query_log(query_text, k):
     )
 
     response = qa_chain.invoke({"query": query_text})
+    answer = response["result"]
+    source_docs = response.get("source_documents", [])
+
     logger.info(f"Question: {query_text}")
-    logger.info(f"Answer: {response['result']}")
-    for doc in response['source_documents']:
-        logger.info(f"Source Document: {doc.metadata['source']}")
+    logger.info(f"Answer: {answer}")
+
+    return answer, source_docs
 
 if __name__ == "__main__":
     # Example query

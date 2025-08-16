@@ -8,4 +8,6 @@ langchain-community
 langchain-qdrant
 qdrant-client
 tiktoken
-
+fastapi
+uvicorn
+streamlit

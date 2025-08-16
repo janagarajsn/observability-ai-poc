@@ -113,7 +113,12 @@ def generate_event(timestamp):
 
     return log
 
-def generate_logs_for_day(date_str, num_logs=2000, output_dir="input-logs"):
+def generate_logs_for_day(date_str, num_logs=2000, output_dir=None):
+    
+    # Project root directory
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    output_dir = os.path.join(project_root, "input-logs")
+
     date = datetime.strptime(date_str, "%Y-%m-%d")
     logs = []
     os.makedirs(output_dir, exist_ok=True)
@@ -128,6 +133,8 @@ def generate_logs_for_day(date_str, num_logs=2000, output_dir="input-logs"):
         json.dump(logs, f, indent=2)
 
     print(f"Generated {len(logs)} logs for {date_str} → {file_path}")
+
+    return file_path
 
 def stream_logs(interval_seconds=2):
     """Continuously generate logs in real time."""
