@@ -65,7 +65,7 @@ The project is ideal for experimenting with AI-driven observability workflows, b
 
 - **Ingest logs into Qdrant (In VSC Code Terminal):**
 	```sh
-	python src/ingest-logs.py
+	python src/ingest-logs.py <Qdrant Collection Name>
 	```
 
 - **Query logs using RAG (In VSC Code Terminal):**
