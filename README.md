@@ -70,12 +70,12 @@ The project is ideal for experimenting with AI-driven observability workflows, b
 
 ## Usage
 
-- **Generate Sample logs (In VSC Code Terminal):**
+- **Generate Sample logs (In VSCode Terminal):**
 	```sh
 	python src/log-generator.py <YYYY-MM-DD> <Number of log entries you need per file>
 	```
 
-- **Ingest logs into Qdrant (In VSC Code Terminal):**
+- **Ingest logs into Qdrant (In VSCode Terminal):**
 	```sh
 	python src/ingest-logs.py <Qdrant Collection Name>
 	```
