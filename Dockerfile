@@ -12,6 +12,7 @@ RUN pip install --no-cache-dir -r ../requirements.txt
 # Copy application code
 COPY src/ .
 
+# Expose port 8000 for FastAPI and 8501 for Streamlit
 EXPOSE 8000 8501
 
 CMD ["bash", "-c", "echo 'Run your services'"]

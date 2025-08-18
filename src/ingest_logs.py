@@ -41,7 +41,7 @@ qdrant_client = QdrantClient(url=QDRANT_URL)
 embeddings = OpenAIEmbeddings(model=EMBEDDING_MODEL)
 
 # Text Splitter
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=100)
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP)
 
 # Track ingested log files
 def load_ingested_log_files():
@@ -97,14 +97,14 @@ def ingest_logs(collection_name: str):
                 logger.error(f"Error parsing {log_file}: {e}")
                 continue
 
-            # Convert each log entry into a document
+        # Convert each log entry into a document
         docs = []
         for i in range(0, len(logs), LOG_BATCH):
             log_batch = logs[i:i+LOG_BATCH]
             log_text = "\n".join([json.dumps(log, indent=2) for log in log_batch])
             docs.append(Document(page_content=log_text, metadata={"source": log_file}))
 
-        # Chunk the logs
+        # Chunk the Docs
         chunks = text_splitter.split_documents(docs)
 
         # Save in Qdrant
