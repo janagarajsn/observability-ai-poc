@@ -30,6 +30,8 @@ The project is ideal for experimenting with AI-driven observability workflows, b
 │   ├── log_generator.py    # Synthetic log generator
 │   ├── rag_query_log.py    # RAG-based log querying
 ├── requirements.txt        # Python dependencies
+├── Dockerfile              # Docker file for containerization
+├── docker-compose.yml      # Docker compose yaml for running the entire setup in local
 ```
 
 ## Setup
@@ -38,6 +40,7 @@ The project is ideal for experimenting with AI-driven observability workflows, b
      ```
      docker run -d -p 6333:6333 --name qdrant qdrant/qdrant
      ```
+	 - The Qdrant UI will be accessible at http://localhost:6333/dashboard
 
 2. **Clone the repository:**
 	 ```sh
@@ -73,7 +76,14 @@ The project is ideal for experimenting with AI-driven observability workflows, b
 	python src/rag_query_log.py
 	```
 
-- **Swagger for generating and ingesting logs:**
+- **Run both the apps (API and Streamlit UI) in local docker environment:**
+    - This will start both FastAPI and Streamlit UI
+	- You can access the apps in the corresponding URLs (shown below)
+    ```sh
+	docker-compose up
+	```
+
+- **Running Swagger separately for generating and ingesting logs:**
     - Start the uvicorn server with api.py 
     ```sh
 	cd src
@@ -89,7 +99,7 @@ The project is ideal for experimenting with AI-driven observability workflows, b
 	    - Collection Name: Unique Qdrant collection name
 	- This uvicorn app can be closed or killed after the ingestion is done. It is used only for the Ingestion
 
-- **Chat UI:**
+- **Running Streamlit Chat UI seprately:**
     - Start the Streamlit application for running the Chat UI
 	```sh
 	cd src
