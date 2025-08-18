@@ -34,6 +34,14 @@ The project is ideal for experimenting with AI-driven observability workflows, b
 ├── docker-compose.yml      # Docker compose yaml for running the entire setup in local
 ```
 
+## Architecture
+
+![Alt text](images/arch.png)
+
+## RAG Overview
+
+![Alt text](images/rag-overview.png)
+
 ## Setup
 
 1. **Run Qdrant DB in localhost**
@@ -41,6 +49,7 @@ The project is ideal for experimenting with AI-driven observability workflows, b
      docker run -d -p 6333:6333 --name qdrant qdrant/qdrant
      ```
 	 - The Qdrant UI will be accessible at http://localhost:6333/dashboard
+	![Alt text](images/qdrant-ui.png)
 
 2. **Clone the repository:**
 	 ```sh
@@ -98,6 +107,7 @@ The project is ideal for experimenting with AI-driven observability workflows, b
 	  - ingest_logs:
 	    - Collection Name: Unique Qdrant collection name
 	- This uvicorn app can be closed or killed after the ingestion is done. It is used only for the Ingestion
+    ![Alt text](images/log-api.png)
 
 - **Running Streamlit Chat UI seprately:**
     - Start the Streamlit application for running the Chat UI
@@ -106,6 +116,7 @@ The project is ideal for experimenting with AI-driven observability workflows, b
 	streamlit run app.py
 	```
 	- This will open the Chat UI at http://localhost:8501
+	![Alt text](images/streamlit-ui.png)
 
 
 
