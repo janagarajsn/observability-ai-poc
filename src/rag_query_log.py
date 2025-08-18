@@ -6,7 +6,6 @@ from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_qdrant import QdrantVectorStore
 from langchain.chains import RetrievalQA
 from langchain_core.prompts import ChatPromptTemplate
-from langchain.schema import AIMessage, HumanMessage
 
 # Load environment variables
 load_dotenv()
