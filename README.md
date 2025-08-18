@@ -116,7 +116,7 @@ The project is ideal for experimenting with AI-driven observability workflows, b
 	streamlit run app.py
 	```
 	- This will open the Chat UI at http://localhost:8501
-	![Alt text](images/streamlit-ui.png)
+	![Alt text](images/Streamlit-ui.png)
 
 
 
