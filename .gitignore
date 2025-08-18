@@ -4,5 +4,3 @@ logs/
 input-logs/
 .env
 src/__pycache__/
-ingestracker/ingested_files.json
-
