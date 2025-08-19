@@ -49,6 +49,8 @@ The project is ideal for experimenting with AI-driven observability workflows, b
      docker run -d -p 6333:6333 --name qdrant qdrant/qdrant
      ```
 	 - The Qdrant UI will be accessible at http://localhost:6333/dashboard
+	 - Or you can leverage Free tier offered by [Qdrant Cloud](https://qdrant.tech/pricing/)
+	 - Remember to use API Key along with URL while creating Qdrant client if you are using Qdrant Cloud
 	![Alt text](images/qdrant-ui.png)
 
 2. **Clone the repository:**
@@ -118,5 +120,28 @@ The project is ideal for experimenting with AI-driven observability workflows, b
 	- This will open the Chat UI at http://localhost:8501
 	![Alt text](images/Streamlit-ui.png)
 
+## Few questions you can ask
 
-
+- **Cluster / Node Metrics:**
+    - Which nodes in the aks-demo-cluster are experiencing high CPU usage?
+	- What is the memory usage trend for aks-nodepool-2 over the last few hours?
+	- Which pods are running on aks-nodepool-3 and what are their CPU usages?
+	- How many nodes reported CPU usage above 2% between 00:00 and 03:00 on 2025-08-09?
+- **Pod / Container Metrics:**
+    - Which containers in namespace-1 had memory usage above 1000MB?
+	- List the pods in namespace-4 that logged ERROR level messages.
+	- What is the average CPU usage of app1-container across all its pods?
+	- Show the logs of app7-pod-5 during the timeframe 00:28–01:12.
+- **Log Level / Event Analysis:**
+    - Which pods emitted WARN or ERROR messages on 2025-08-09?
+	- Are there any DEBUG logs for app6-container?
+	- How many INFO messages were logged for app10 on 2025-08-09?
+	- What eventType events occurred, such as NodeScaledUp?
+- **Message / Trace Analysis:**
+    - Show logs where the message mentions “Node ScaledUp.”
+	- List all trace IDs associated with ERROR level logs.
+	- Which logs indicate potential resource pressure based on message content?
+- **Cross-cutting / Comparative Queries:**
+    - Compare CPU usage of app1-pod-5 and app7-pod-5.
+	- Which pods had the highest memory usage in namespace-5?
+	- Which nodes consistently show low CPU usage below 0.5%?
