@@ -6,6 +6,7 @@ from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_qdrant import QdrantVectorStore
 from langchain.chains import RetrievalQA
 from langchain_core.prompts import ChatPromptTemplate
+from langchain.vectorstores.base  import VectorStoreRetriever
 
 # Load environment variables
 load_dotenv()
@@ -22,6 +23,7 @@ EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
 RETRIEVAL_MODEL = os.getenv("RETRIEVAL_MODEL", "gpt-4.1-nano")
 DEFAULT_K = int(os.getenv("DEFAULT_K", 5))
 CHAT_HISTORY_LIMIT = int(os.getenv("CHAT_HISTORY_LIMIT", 10))
+THRESHOLD_LIMIT = float(os.getenv("THRESHOLD_LIMIT", 0.6))
 
 # Initialize Qdrant client
 qdrant_client = QdrantClient(url=QDRANT_URL)
@@ -45,13 +47,28 @@ else:
 
 vector_store = QdrantVectorStore(client=qdrant_client, collection_name=COLLECTION_NAME, embedding=embeddings)
 
+# Custom Threshold Retriever
+class ThresholdRetriever(VectorStoreRetriever):
+    def __init__(self, vectorstore, k=DEFAULT_K, threshold=THRESHOLD_LIMIT):
+        super().__init__(vectorstore=vectorstore)
+        self.vectorstore = vectorstore
+        self.k = k
+        self.threshold = threshold
+
+    def get_relevant_documents(self, query: str):
+        docs_and_scores = self.vectorstore.similarity_search_with_score(query, k=self.k)
+        filtered_docs = [doc for doc, score in docs_and_scores if score >= self.threshold]
+        if not filtered_docs:
+            logger.info(f"No documents passed the similarity score {self.threshold}")
+        return filtered_docs
+
 # Query logs with RAG
-def query_log(query_text, k=DEFAULT_K, chat_history=None):
+def query_log(query_text, k=DEFAULT_K, threshold=THRESHOLD_LIMIT, chat_history=None):
     logger.info(f"Querying logs with: {query_text}")
 
     chat_history = chat_history or []
 
-    retriever = vector_store.as_retriever(search_kwargs={"k": k})
+    retriever = ThresholdRetriever(vectorstore=vector_store, k=k, threshold=threshold)
 
     qa_chain = RetrievalQA.from_chain_type(
         llm=ChatOpenAI(model=RETRIEVAL_MODEL, api_key=OPENAI_API_KEY, temperature=0),
@@ -60,6 +77,11 @@ def query_log(query_text, k=DEFAULT_K, chat_history=None):
     )
 
     response = qa_chain.invoke({"query": query_text})
+    # If retriever returned no documents, enforce safe answer
+    if not response.get("source_documents", []):
+        logger.info("No relevant documents found.")
+        return "Sorry, the question is out of my scope", []
+
     answer = response["result"]
     source_docs = response.get("source_documents", [])
 
@@ -76,4 +98,6 @@ if __name__ == "__main__":
             break
         k = input(f"Enter the number of results to return (default is {DEFAULT_K}): ")
         k = int(k) if k.isdigit() else DEFAULT_K
-        query_log(query, k)
+        threshold = input(f"Enter the threshold score (default is {THRESHOLD_LIMIT}): ")
+        threshold = float(threshold) if threshold else THRESHOLD_LIMIT
+        query_log(query, k, threshold)
