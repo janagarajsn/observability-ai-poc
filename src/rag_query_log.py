@@ -1,12 +1,14 @@
 import os
 import logging
+from typing import List
 from dotenv import load_dotenv
+from pydantic import PrivateAttr
 from qdrant_client import QdrantClient
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_qdrant import QdrantVectorStore
 from langchain.chains import RetrievalQA
 from langchain_core.prompts import ChatPromptTemplate
-from langchain.vectorstores.base  import VectorStoreRetriever
+from langchain.schema import BaseRetriever, Document
 
 # Load environment variables
 load_dotenv()
@@ -48,19 +50,26 @@ else:
 vector_store = QdrantVectorStore(client=qdrant_client, collection_name=COLLECTION_NAME, embedding=embeddings)
 
 # Custom Threshold Retriever
-class ThresholdRetriever(VectorStoreRetriever):
-    def __init__(self, vectorstore, k=DEFAULT_K, threshold=THRESHOLD_LIMIT):
-        super().__init__(vectorstore=vectorstore)
-        self.vectorstore = vectorstore
-        self.k = k
-        self.threshold = threshold
+class ThresholdRetriever(BaseRetriever):
+    _vectorstore: QdrantVectorStore = PrivateAttr()
+    _k: int = PrivateAttr()
+    _threshold: float = PrivateAttr()
+    def __init__(self, vectorstore=vector_store, k=DEFAULT_K, threshold=THRESHOLD_LIMIT):
+        super().__init__()
+        self._vectorstore = vectorstore
+        self._k = k
+        self._threshold = threshold
 
-    def get_relevant_documents(self, query: str):
-        docs_and_scores = self.vectorstore.similarity_search_with_score(query, k=self.k)
-        filtered_docs = [doc for doc, score in docs_and_scores if score >= self.threshold]
+    def get_relevant_documents(self, query: str) -> List[Document]:
+        docs_and_scores = self._vectorstore.similarity_search_with_score(query, k=self._k)
+        filtered_docs = [doc for doc, score in docs_and_scores if score >= self._threshold]
         if not filtered_docs:
-            logger.info(f"No documents passed the similarity score {self.threshold}")
+            logger.info(f"No documents passed the similarity score {self._threshold}")
         return filtered_docs
+
+    # Async version for compatibility
+    async def aget_relevant_documents(self, query: str) -> List[Document]:
+        return self.get_relevant_documents(query)
 
 # Query logs with RAG
 def query_log(query_text, k=DEFAULT_K, threshold=THRESHOLD_LIMIT, chat_history=None):
@@ -91,7 +100,7 @@ def query_log(query_text, k=DEFAULT_K, threshold=THRESHOLD_LIMIT, chat_history=N
     return answer, source_docs
 
 if __name__ == "__main__":
-    # Example query
+    # Query
     while True:
         query = input("Enter your query (or 'exit' to quit): ")
         if query.lower() == 'exit':
