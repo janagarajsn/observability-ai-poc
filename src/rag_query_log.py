@@ -26,9 +26,10 @@ RETRIEVAL_MODEL = os.getenv("RETRIEVAL_MODEL", "gpt-4.1-nano")
 DEFAULT_K = int(os.getenv("DEFAULT_K", 5))
 CHAT_HISTORY_LIMIT = int(os.getenv("CHAT_HISTORY_LIMIT", 10))
 THRESHOLD_LIMIT = float(os.getenv("THRESHOLD_LIMIT", 0.5))
+QDRANT_CLOUD_API_KEY = os.getenv("QDRANT_CLOUD_API_KEY")
 
 # Initialize Qdrant client
-qdrant_client = QdrantClient(url=QDRANT_URL)
+qdrant_client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_CLOUD_API_KEY)
 
 # Initialize embeddings
 embeddings = OpenAIEmbeddings(model=EMBEDDING_MODEL)

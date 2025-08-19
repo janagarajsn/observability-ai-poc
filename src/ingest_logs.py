@@ -33,9 +33,10 @@ VECTOR_SIZE = int(os.getenv("VECTOR_SIZE", 1536))
 BATCH_SIZE = int(os.getenv("BATCH_SIZE", 10))
 BATCH_SLEEP_TIME = int(os.getenv("BATCH_SLEEP_TIME", 2))
 LOG_BATCH = int(os.getenv("LOG_BATCH", 20))
+QDRANT_CLOUD_API_KEY = os.getenv("QDRANT_CLOUD_API_KEY")
 
 # Qdrant Client
-qdrant_client = QdrantClient(url=QDRANT_URL)
+qdrant_client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_CLOUD_API_KEY)
 
 # Embeddings and Vector Store
 embeddings = OpenAIEmbeddings(model=EMBEDDING_MODEL)
