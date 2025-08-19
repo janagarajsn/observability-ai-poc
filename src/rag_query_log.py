@@ -19,13 +19,13 @@ logger = logging.getLogger(__name__)
 
 # Configs
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
+QDRANT_URL = os.getenv("QDRANT_URL", "http://host.docker.internal:6333")
 COLLECTION_NAME = os.getenv("COLLECTION_NAME", "aks_logs")
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
 RETRIEVAL_MODEL = os.getenv("RETRIEVAL_MODEL", "gpt-4.1-nano")
 DEFAULT_K = int(os.getenv("DEFAULT_K", 5))
 CHAT_HISTORY_LIMIT = int(os.getenv("CHAT_HISTORY_LIMIT", 10))
-THRESHOLD_LIMIT = float(os.getenv("THRESHOLD_LIMIT", 0.6))
+THRESHOLD_LIMIT = float(os.getenv("THRESHOLD_LIMIT", 0.5))
 
 # Initialize Qdrant client
 qdrant_client = QdrantClient(url=QDRANT_URL)
