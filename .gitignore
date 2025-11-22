@@ -4,3 +4,6 @@ logs/
 input-logs/
 .env
 src/__pycache__/
+.venv/
+.vscode/
+venv/
